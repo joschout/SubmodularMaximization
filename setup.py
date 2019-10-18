@@ -8,7 +8,7 @@ setup(
     name='Unconstrained Submodular Maximization',
     version='0.0.1',
     packages=[''],
-    package_dir={'': 'usm'},
+    package_dir={'': 'submodmax'},
     url='https://github.com/joschout/SubmodularMaximization',
     license='Apache 2.0',
     author='Jonas Schouterden',
