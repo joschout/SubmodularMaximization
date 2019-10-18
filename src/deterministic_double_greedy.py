@@ -5,7 +5,7 @@ from abstract_optimizer import AbstractOptimizer, AbstractObjectiveFunction
 E = TypeVar('E')
 
 
-class DeterministicDoubleGreedyOptimizer(AbstractOptimizer):
+class DeterministicDoubleGreedySearch(AbstractOptimizer):
     """
     Deterministic (Double Greedy) Unconstrained submodular maximization, by Buchbinder and Feldman
 

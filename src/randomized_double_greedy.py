@@ -8,7 +8,7 @@ from abstract_optimizer import AbstractOptimizer, AbstractObjectiveFunction
 E = TypeVar('E')
 
 
-class RandomizedDoubleGreedyOptimizer(AbstractOptimizer):
+class RandomizedDoubleGreedySearch(AbstractOptimizer):
     """
     Randomized (Double Greedy) Unconstrained submodular maximization, by Buchbinder and Feldman
 
