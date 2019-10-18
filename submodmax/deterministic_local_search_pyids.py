@@ -1,6 +1,6 @@
 from typing import Set, Tuple, Optional, TypeVar
 
-from abstract_optimizer import AbstractOptimizer, AbstractObjectiveFunction
+from .abstract_optimizer import AbstractOptimizer, AbstractObjectiveFunction
 
 E = TypeVar('E')
 

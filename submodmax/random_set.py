@@ -1,7 +1,7 @@
 import random
 from typing import TypeVar, Set, Tuple
 
-from abstract_optimizer import AbstractOptimizer
+from .abstract_optimizer import AbstractOptimizer
 
 E = TypeVar('E')
 

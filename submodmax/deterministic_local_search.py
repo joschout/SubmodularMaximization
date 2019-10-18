@@ -1,6 +1,6 @@
 from typing import Set, Tuple, Optional, TypeVar
 
-from abstract_optimizer import AbstractOptimizer, AbstractObjectiveFunction
+from .abstract_optimizer import AbstractOptimizer, AbstractObjectiveFunction
 
 E = TypeVar('E')
 
@@ -35,7 +35,7 @@ class DeterministicLocalSearch(AbstractOptimizer):
         self.rho: float = (1 + self.epsilon / (n * n))
 
     def optimize(self) -> Set[E]:
-        solution_set, func_val1 = self._deterministic_local_search_v2()  # type: Set[E], float
+        solution_set, func_val1 = self._deterministic_local_search()  # type: Set[E], float
         complement_of_solution_set: Set[E] = self.ground_set - solution_set
         func_val2: float = self.objective_function.evaluate(complement_of_solution_set)
 
@@ -119,7 +119,7 @@ class DeterministicLocalSearch(AbstractOptimizer):
         #   increases the objective function with more than (1 + epsilon / (n * n))
         return None
 
-    def _deterministic_local_search_v2(self) -> Tuple[Set[E], float]:
+    def _deterministic_local_search(self) -> Tuple[Set[E], float]:
         # the initial subset is the maximum over all singletons v in X
         solution_set: Set[E]
         solution_set_obj_func_val: float

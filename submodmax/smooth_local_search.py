@@ -4,8 +4,8 @@ from typing import Set, Optional, TypeVar, List
 
 import numpy as np
 
-from abstract_optimizer import AbstractOptimizer, AbstractObjectiveFunction
-from random_set import sample_a_set_with_bias_delta_on_A
+from .abstract_optimizer import AbstractOptimizer, AbstractObjectiveFunction
+from .random_set import sample_a_set_with_bias_delta_on_A
 
 E = TypeVar('E')
 

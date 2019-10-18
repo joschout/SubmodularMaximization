@@ -1,1 +1,1 @@
-name = "submodmax"
+name="submodmax"
