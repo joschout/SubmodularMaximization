@@ -80,13 +80,17 @@ However, these implementations were tightly integrated with their respective IDS
 The papers proposing the algorithms in this repository:
 
 > Feige, U., Mirrokni, V. S., & Vondrák, J. (2011). Maximizing Non-monotone Submodular Functions. SIAM J. Comput., 40(4), 1133–1153. https://doi.org/10.1137/090779346
+> 
 > Buchbinder, N., Feldman, M., Naor, J. S., & Schwartz, R. (2015). A tight linear time (1/2)-approximation for unconstrained submodular maximization. SIAM Journal on Computing, 44(5), 1384–1402. https://doi.org/10.1137/130929205
 
 Some good references for submodular maximization
 > Krause, A., & Golovin, D. (2011). Submodular function maximization. Tractability, 9781107025, 71–104. https://doi.org/10.1017/CBO9781139177801.004
+> 
 > Bach, F. (2013). Learning with submodular functions: A convex optimization perspective. Foundations and Trends in Machine Learning, 6(2–3), 145–373. https://doi.org/10.1561/2200000039
+> 
 > Badanidiyuru, A., & Vondrák, J. (2014). Fast algorithms for maximizing submodular functions. Proceedings of the Annual ACM-SIAM Symposium on Discrete Algorithms, 1497–1514.
 > Buchbinder, N., & Feldman, M. (2018). Deterministic Algorithms for Submodular Maximization. ACM Transactions on Algorithms, 14(3).
+> 
 > Buchbinder, N., & Feldman, M. (2019). Submodular Functions Maximization Problems. Handbook of Approximation Algorithms and Metaheuristics, Second Edition, 753–788. https://doi.org/10.1201/9781351236423-42
 
 Andreas Krause and Carlos Guestrin maintain a [great website about submodular optimization and the submodularity property](https://las.inf.ethz.ch/submodularity/)
@@ -96,4 +100,5 @@ Jan Vondrak hosts the [slides for some great presentations he did about submodul
 References for the Interpretable Decision Set algorithm:
 
 > Lakkaraju, H., Bach, S. H., & Leskovec, J. (2016). Interpretable Decision Sets: A Joint Framework for Description and Prediction. In Proceedings of the 22Nd ACM SIGKDD International Conference on Knowledge Discovery and Data Mining (pp. 1675–1684). New York, NY, USA: ACM. https://doi.org/10.1145/2939672.2939874
+> 
 > Jiri Filip, Tomas Kliegr. PyIDS - Python Implementation of Interpretable Decision Sets Algorithm by Lakkaraju et al, 2016. RuleML+RR2019@Rule Challenge 2019. http://ceur-ws.org/Vol-2438/paper8.pdf
