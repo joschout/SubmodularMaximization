@@ -16,6 +16,11 @@ Next, this repository contains two of the algorithms propsed by Buchbinder, N., 
 
 > Buchbinder, N., Feldman, M., Naor, J. S., & Schwartz, R. (2015). A tight linear time (1/2)-approximation for unconstrained submodular maximization. SIAM Journal on Computing, 44(5), 1384–1402. https://doi.org/10.1137/130929205
 
+For a lack of a better name, this repository calls these algorithms:
+* Deterministic Double Greedy Search (Deterministic USM in the original paper)
+* Randomized Double Greedy Search (Randomized USM in the original paper)
+
+
 ## Usage
 
 The following describes how to use this repository in your own implementation.
