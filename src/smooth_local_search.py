@@ -1,36 +1,50 @@
 import math
 import warnings
-from typing import TypeVar, Set, List
+from typing import Set, Optional, TypeVar, List
 
 import numpy as np
 
 from abstract_optimizer import AbstractOptimizer, AbstractObjectiveFunction
-from random_set import sample_a_set_with_bias_delta_on_A, RandomSetOptimizer
+from random_set import sample_a_set_with_bias_delta_on_A
 
 E = TypeVar('E')
 
 
 class SmoothLocalSearch(AbstractOptimizer):
     """
-    Smooth Local Search optimizer
-    """
+    Optimization procedure
+        to find a subset of the larger set X
+            that is an approximate solution to the objective function with some theoretical guarantees.
 
-    def __init__(self, objective_function: AbstractObjectiveFunction, ground_set: Set[E], debug: bool = True):
+
+    This requires the objective function to be:
+        * non-negative
+        * non-normal
+        * non-monotone
+        * submodular
+    over the power set of X.
+
+    Note: the problem of maximizing a submodular function is NP-hard.
+
+    """
+    def __init__(self, objective_function: AbstractObjectiveFunction, ground_set: Set[E], debug=True):
         super().__init__(objective_function, ground_set, debug)
-        self.rs_optimizer = RandomSetOptimizer(ground_set)
+
+        self.empty_set: Set[E] = set()
+        self.ground_set_size: int = len(self.ground_set)
 
     def optimize(self) -> Set[E]:
-        delta1: float = 1 / 3
-        delta_prime1: float = 1 / 3
+        delta1: float = 1/3
+        delta_prime1: float = 1/3
 
-        delta2: float = 1 / 3
+        delta2: float = 1/3
         delta_prime2: float = -1.0
 
         solution_set1: Set[E] = self._smooth_local_search(delta=delta1, delta_prime=delta_prime1)
         solution_set2: Set[E] = self._smooth_local_search(delta=delta2, delta_prime=delta_prime2)
 
-        func_val1: float = self.objective_function.evaluate(solution_set1)
-        func_val2: float = self.objective_function.evaluate(solution_set2)
+        func_val1 = self.objective_function.evaluate(solution_set1)
+        func_val2 = self.objective_function.evaluate(solution_set2)
 
         if func_val1 >= func_val2:
             return solution_set1
@@ -38,120 +52,110 @@ class SmoothLocalSearch(AbstractOptimizer):
             return solution_set2
 
     def _smooth_local_search(self, delta: float, delta_prime: float) -> Set[E]:
-        """
-        Optimization procedure
-            to find a subset of the larger set X
-                that is an approximate solution to the objective function with some theoretical guarantees.
-
-
-        This requires the objective function to be:
-            * non-negative
-            * non-normal
-            * non-monotone
-            * submodular
-        over the power set of X.
-
-        Note: the problem of maximizing a submodular function is NP-hard.
-
-        :param delta:
-        :param delta_prime:
-        :return:
-        """
-
-        n = len(self.ground_set)
 
         # Estimate the OPTIMAL value, i.e. the value of the submodular function for the optimal subset
-        OPT: float = self._compute_OPT()
-        # initialize the solution set with the empty set
-        current_solution_set: Set[E] = set()
-
-        error_threshold: float = 1 / (n * n) * OPT
-        estimated_omega_bound: float = 2.0 * error_threshold
+        OPT: float = self._estimate_optimal_objective_function_value()
+        n: int = self.ground_set_size
+        omega_threshold: float = 2.0 / (n * n) * OPT
+        error_bound_for_estimated_omega: float = 1 / (n * n) * OPT
 
         if self.debug:
-            print("2/(n*n) * OPTIMUM VALUE =", estimated_omega_bound)
+            print("bound for omega estimate 2/(n*n) * OPTIMUM VALUE =", omega_threshold)
 
-        restart_omega_computations: bool = False
+        # initialize the solution set with the empty set
+        current_solution_set: Set[E] = set()
+        current_solution_set_complement: Set[E] = self.ground_set.copy()
 
         nb_of_adds: int = 0
         nb_of_removes: int = 0
 
-        while True:
-            # step 2 & 3: for each element,
-            #       estimate omega within a certain error_threshold;
-            #       if estimated omega > 2/n^2 * OPT,
-            #       then add the corresponding elem to soln set
-            #            and recompute omega estimates again
-            omega_estimates: List[float] = []
-            elem: E
-            for elem in self.ground_set:
+        # For each element in the ground set,calculate the estimate of omega for the current set A
+        #   IF an omega_estima > omega_bound:
+        #       add elem to A,
+        #       restart
+        #    ELSE
+        #       IF an omega_estimate < - omega_bound
+        #          add elem to A
+        #          restart
+        # S is a local optimum of a smoothed version of the objective function
+        local_optimum_found: bool = False
+        while not local_optimum_found:
 
-                if self.debug:
-                    print("Estimating omega for elem", elem, sep="\n")
+            optional_elem_to_add: Optional[E] = self._find_elem_in_complement_of_solution_set_with_sufficiently_large_omega(
+                current_solution_set, current_solution_set_complement,
+                error_bound_for_estimated_omega, omega_threshold, delta)
 
-                warnings.warn("not sure if the constant is correct! This changed with the commit with hash 68bbbd2")
-
-                if self.debug:
-                    print("Error Threshold:", error_threshold)
-
-                omega_est: float = self._estimate_omega(elem, current_solution_set, error_threshold, delta)
-                omega_estimates.append(omega_est)
-
-                if elem in current_solution_set:
-                    continue
-
-                if omega_est > estimated_omega_bound:
-                    # add this element to solution set and recompute omegas
-                    current_solution_set.add(elem)
-                    restart_omega_computations = True
-
+            if optional_elem_to_add is None:
+                optional_elem_to_remove: Optional[E] = self._find_elem_in_solution_set_with_sufficiently_low_omega(
+                    current_solution_set,
+                    error_bound_for_estimated_omega, omega_threshold, delta)
+                if optional_elem_to_remove is None:
+                    local_optimum_found = True
+                else:
                     if self.debug:
-                        print("adding elem to solution set")
-                    break
+                        print("removing elem from solution set", str(optional_elem_to_remove))
+                    current_solution_set.remove(optional_elem_to_remove)
+                    current_solution_set_complement.add(optional_elem_to_remove)
+                    nb_of_removes += 1
+            else:
+                if self.debug:
+                    print("adding elem to solution set:", str(optional_elem_to_add))
+                current_solution_set.add(optional_elem_to_add)
+                current_solution_set_complement.remove(optional_elem_to_add)
+                nb_of_adds += 1
+        if self.debug:
+            print("nb of elements added:", nb_of_adds)
+            print("nb of elements removed:", nb_of_removes)
 
-            if restart_omega_computations:
-                restart_omega_computations = False
-                continue
+        if len(current_solution_set) == 0:
+            print("the final set based on which is sampled is empty")
+            warnings.warn("the final set based on which is sampled is empty")
 
-            elem_idx: int
-            elem: E
-            for elem_idx, elem in enumerate(current_solution_set):
-                if omega_estimates[elem_idx] < - estimated_omega_bound:
-                    current_solution_set.remove(elem)
-                    restart_omega_computations = True
+        return sample_a_set_with_bias_delta_on_A(current_solution_set, self.ground_set, delta_prime)
 
-                    if self.debug:
-                        print("removing elem from solution set")
-                    break
+    def _find_elem_in_complement_of_solution_set_with_sufficiently_large_omega(self,
+                                                                               current_solution_set: Set[E],
+                                                                               complement_of_current_solution_set: Set[E],
+                                                                               error_threshold: float,
+                                                                               omega_estimate_threshold: float,
+                                                                               delta: float) -> Optional[E]:
+        for elem in complement_of_current_solution_set:
+            omega_est = self._estimate_omega(elem, current_solution_set, error_threshold, delta)
+            if omega_est > omega_estimate_threshold:
+                # add this element to solution set and recompute omegas
+                return elem
+        return None
 
-            if restart_omega_computations:
-                restart_omega_computations = False
-                continue
+    def _find_elem_in_solution_set_with_sufficiently_low_omega(self,
+                                                               current_solution_set: Set[E],
+                                                               error_threshold: float,
+                                                               omega_estimate_threshold: float,
+                                                               delta: float) -> Optional[E]:
+        elem: E
+        for elem in current_solution_set:
+            omega_est = self._estimate_omega(elem, current_solution_set, error_threshold, delta)
+            if omega_est < - omega_estimate_threshold:
+                return elem
+        return None
 
-            if self.debug:
-                print("nb of elements added:", nb_of_adds)
-                print("nb of elements removed:", nb_of_removes)
-
-            if len(current_solution_set) == 0:
-                print("the final set based on which is sampled is empty")
-                warnings.warn("the final set based on which is sampled is empty")
-
-            return sample_a_set_with_bias_delta_on_A(current_solution_set, self.ground_set, delta_prime)
-
-    def _compute_OPT(self) -> float:
+    def _estimate_optimal_objective_function_value(self) -> float:
         """
         Estimate the optimal value for the objective function, by
          1. taking a sample subset of the possible elements, each element sampled with probability 1/2,
          2. evaluating the objective function for this random solution set
         """
-        solution_set: Set[E] = self.rs_optimizer.optimize()
+        uniformly_random_subset: Set[E] = sample_a_set_with_bias_delta_on_A(
+            self.empty_set, self.ground_set, delta=0.5)
+        estimated_optimal_objective_function_value: float = self.objective_function.evaluate(uniformly_random_subset)
+        return estimated_optimal_objective_function_value
 
-        return self.objective_function.evaluate(solution_set)
+    def _estimate_omega(self, elem: E, solution_set: Set[E], error_threshold, delta) -> float:
+        if self.debug:
+            print("Estimating omega for elem", elem, sep="\n")
 
-    def _estimate_omega(self, elem: E, solution_set: Set[E], error_threshold: float, delta: float) -> float:
         # NOTE: these lists are never emptied/re-initialized
-        expected_values_of_function_include_x: List[float] = []
-        expected_values_of_function_exclude_x: List[float] = []
+        expected_values_of_function_include_x: List[E] = []
+        expected_values_of_function_exclude_x: List[E] = []
 
         standard_error: float = float('+inf')
         while standard_error > error_threshold:
@@ -178,9 +182,10 @@ class SmoothLocalSearch(AbstractOptimizer):
             variance_exp_include: float = np.var(expected_values_of_function_include_x)
             variance_exp_exclude: float = np.var(expected_values_of_function_exclude_x)
             standard_error: float = math.sqrt(
-                variance_exp_include / len(expected_values_of_function_include_x) + variance_exp_exclude / len(expected_values_of_function_exclude_x))
+                variance_exp_include / len(expected_values_of_function_include_x) + variance_exp_exclude / len(
+                    expected_values_of_function_exclude_x))
 
             if self.debug:
-                print("Standard Error:", standard_error, ", Error Threshold:", error_threshold)
+                print("\tStandard Error:", standard_error, ", Error Threshold:", error_threshold)
 
         return np.mean(expected_values_of_function_include_x) - np.mean(expected_values_of_function_exclude_x)
