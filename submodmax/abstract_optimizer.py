@@ -16,3 +16,4 @@ class AbstractOptimizer:
 
     def optimize(self) -> Set[E]:
         raise NotImplementedError("abstract method")
+# foobar
