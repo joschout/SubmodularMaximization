@@ -35,7 +35,7 @@ class RandomizedDoubleGreedySearch(AbstractOptimizer):
 
     def optimize(self) -> Set[E]:
         X_prev: Set[E] = set()
-        Y_prev: Set[E] = self.ground_set
+        Y_prev: Set[E] = self.ground_set.copy()
 
         f_on_X_prev: float = self.objective_function.evaluate(X_prev)
         f_on_Y_prev: float = self.objective_function.evaluate(Y_prev)
