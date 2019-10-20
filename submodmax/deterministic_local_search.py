@@ -1,6 +1,6 @@
 from typing import Set, Tuple, Optional, TypeVar
 
-from .abstract_optimizer import AbstractOptimizer, AbstractObjectiveFunction
+from .abstract_optimizer import AbstractOptimizer, AbstractSubmodularFunction
 
 E = TypeVar('E')
 
@@ -27,7 +27,7 @@ class DeterministicLocalSearch(AbstractOptimizer):
     FOCS paper: https://people.csail.mit.edu/mirrokni/focs07.pdf (page 4-5)
     """
 
-    def __init__(self, objective_function: AbstractObjectiveFunction, ground_set: Set[E], epsilon: float = 0.05,
+    def __init__(self, objective_function: AbstractSubmodularFunction, ground_set: Set[E], epsilon: float = 0.05,
                  debug: bool = True):
         super().__init__(objective_function, ground_set, debug)
         self.epsilon: float = epsilon

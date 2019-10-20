@@ -4,7 +4,7 @@ from typing import Set, Optional, TypeVar, List
 
 import numpy as np
 
-from .abstract_optimizer import AbstractOptimizer, AbstractObjectiveFunction
+from .abstract_optimizer import AbstractOptimizer, AbstractSubmodularFunction
 from .random_set import sample_a_set_with_bias_delta_on_A
 
 E = TypeVar('E')
@@ -27,7 +27,7 @@ class SmoothLocalSearch(AbstractOptimizer):
     Note: the problem of maximizing a submodular function is NP-hard.
 
     """
-    def __init__(self, objective_function: AbstractObjectiveFunction, ground_set: Set[E], debug=True):
+    def __init__(self, objective_function: AbstractSubmodularFunction, ground_set: Set[E], debug=True):
         super().__init__(objective_function, ground_set, debug)
 
         self.empty_set: Set[E] = set()

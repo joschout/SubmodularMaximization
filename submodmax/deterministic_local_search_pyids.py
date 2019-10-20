@@ -1,6 +1,6 @@
 from typing import Set, Tuple, Optional, TypeVar
 
-from .abstract_optimizer import AbstractOptimizer, AbstractObjectiveFunction
+from .abstract_optimizer import AbstractOptimizer, AbstractSubmodularFunction
 
 E = TypeVar('E')
 
@@ -28,7 +28,7 @@ class DeterministicLocalSearchPyIDS(AbstractOptimizer):
     This implementation is largely based on the one from Jiri Filip and Tomas Kliegr included in PyIDS.
     """
 
-    def __init__(self, objective_function: AbstractObjectiveFunction, ground_set: Set[E], epsilon=0.05,
+    def __init__(self, objective_function: AbstractSubmodularFunction, ground_set: Set[E], epsilon=0.05,
                  debug: bool = True):
         super().__init__(objective_function, ground_set, debug)
         self.epsilon: float = epsilon

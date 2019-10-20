@@ -26,18 +26,18 @@ For a lack of a better name, this repository calls these algorithms:
 The following describes how to use this repository in your own implementation.
 
 ## The set function
-To use this in your own code, your function to be maximized should be contained in an object of a class inheriting from `AbstractObjectiveFunction`. This class looks as follows:
+To use this in your own code, your function to be maximized should be contained in an object of a class inheriting from `AbstractSubmodularFunction`. This class looks as follows:
 ``` Python 
-class AbstractObjectiveFunction:
+class AbstractSubmodularFunction:
     def evaluate(self, input_set: Set[E]) -> float:
         raise NotImplementedError('Abstract Method')
 ```
-That is, `AbstractObjectiveFunction` requires its subclasses to implement an `evaluate()` method, taking as input a `Set[E]` and resulting in a `float`. This method should evaluate the set function on the given set, returning the value of the function. This class corresponds to the *'value oracle'*, which should be able to return the value of the function to be maximixed for every possible subset of the *ground set*.
+That is, `AbstractSubmodularFunction` requires its subclasses to implement an `evaluate()` method, taking as input a `Set[E]` and resulting in a `float`. This method should evaluate the set function on the given set, returning the value of the function. This class corresponds to the *'value oracle'*, which should be able to return the value of the function to be maximixed for every possible subset of the *ground set*.
 
-Typically, your own class inheriting `AbstractObjectiveFunction` can contain instance variables for parameters required by the objective function.
+Typically, your own class inheriting `AbstractSubmodularFunction` can contain instance variables for parameters required by the objective function.
 
 ## The Optimizers
-Every included optimizer inherits the class `AbstractOptimizer`. Each optimizer should be iniitialized with at least two arguments:
+Every included optimizer inherits the class `AbstractOptimizer`. Each optimizer should be initialized with at least two arguments:
 1. the objective function to be optimized
 2. the ground set of items. The optimizers will search over the power set of this ground set.
 
@@ -45,8 +45,8 @@ The following shows the definition of the `AbstractOptimizer` class:
 
 ``` Python
 class AbstractOptimizer:
-    def __init__(self, objective_function: AbstractObjectiveFunction, ground_set: Set[E], debug: bool = True):
-        self.objective_function: AbstractObjectiveFunction = objective_function
+    def __init__(self, objective_function: AbstractSubmodularFunction, ground_set: Set[E], debug: bool = True):
+        self.objective_function: AbstractSubmodularFunction = objective_function
         self.ground_set: Set[E] = ground_set
         self.debug: bool = debug
 
@@ -93,7 +93,7 @@ Some good references for submodular maximization
 > 
 > Buchbinder, N., & Feldman, M. (2019). Submodular Functions Maximization Problems. Handbook of Approximation Algorithms and Metaheuristics, Second Edition, 753–788. https://doi.org/10.1201/9781351236423-42
 
-Andreas Krause and Carlos Guestrin maintain a [great website about submodular optimization and the submodularity property](https://las.inf.ethz.ch/submodularity/)
+Andreas Krause and Carlos Guestrin maintain a [great website about submodular optimization and the submodularity property](https://las.inf.ethz.ch/submodularity/), linking to their [Matlab/Octave toolbox for Submodular Function Optimization](https://las.inf.ethz.ch/sfo/index.html).
 
 Jan Vondrak hosts the [slides for some great presentations he did about submodular functions on his website.](https://theory.stanford.edu/~jvondrak/presentations.html)
 

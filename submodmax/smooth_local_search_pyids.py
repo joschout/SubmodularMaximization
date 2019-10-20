@@ -4,7 +4,7 @@ from typing import TypeVar, Set, List
 
 import numpy as np
 
-from .abstract_optimizer import AbstractOptimizer, AbstractObjectiveFunction
+from .abstract_optimizer import AbstractOptimizer, AbstractSubmodularFunction
 from .random_set import sample_a_set_with_bias_delta_on_A, RandomSetOptimizer
 
 E = TypeVar('E')
@@ -29,7 +29,7 @@ class SmoothLocalSearchPyIDS(AbstractOptimizer):
     This implementation is largely based on the one from Jiri Filip and Tomas Kliegr included in PyIDS.
     """
 
-    def __init__(self, objective_function: AbstractObjectiveFunction, ground_set: Set[E], debug: bool = True):
+    def __init__(self, objective_function: AbstractSubmodularFunction, ground_set: Set[E], debug: bool = True):
         super().__init__(objective_function, ground_set, debug)
         self.rs_optimizer = RandomSetOptimizer(ground_set)
 

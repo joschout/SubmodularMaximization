@@ -1,6 +1,6 @@
 from typing import Set, TypeVar
 
-from .abstract_optimizer import AbstractOptimizer, AbstractObjectiveFunction
+from .abstract_optimizer import AbstractOptimizer, AbstractSubmodularFunction
 
 E = TypeVar('E')
 
@@ -23,7 +23,7 @@ class DeterministicDoubleGreedySearch(AbstractOptimizer):
 
     """
 
-    def __init__(self, objective_function: AbstractObjectiveFunction, ground_set: Set[E], debug: bool = True):
+    def __init__(self, objective_function: AbstractSubmodularFunction, ground_set: Set[E], debug: bool = True):
         super().__init__(objective_function, ground_set, debug)
 
     def optimize(self) -> Set[E]:
