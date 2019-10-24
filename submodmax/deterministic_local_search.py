@@ -32,7 +32,7 @@ class DeterministicLocalSearch(AbstractOptimizer):
         super().__init__(objective_function, ground_set, debug)
         self.epsilon: float = epsilon
         n: int = len(ground_set)
-        self.rho: float = (1 + self.epsilon / (n * n))
+        self.rho: float = 0.5 * (1 + self.epsilon / (n * n))
 
     def optimize(self) -> Set[E]:
         solution_set, func_val1 = self._deterministic_local_search()  # type: Set[E], float
@@ -89,6 +89,12 @@ class DeterministicLocalSearch(AbstractOptimizer):
                 mod_solution_set: Set[E] = solution_set | {elem}
                 func_val_mod_solution_set: float = self.objective_function.evaluate(mod_solution_set)
 
+                diff = abs(func_val_mod_solution_set - self.rho * func_val_solution_set)
+
+                # print("\tfunc val mod set:", func_val_mod_solution_set)
+                # print("\tfunc val unmod  :", func_val_solution_set)
+                # print("\tdiff:", diff)
+
                 if func_val_mod_solution_set > self.rho * func_val_solution_set:
                     if self.debug:
                         print("-----------------------")
@@ -133,8 +139,12 @@ class DeterministicLocalSearch(AbstractOptimizer):
         local_optimum_found: bool = False
         while not local_optimum_found:
             # keep adding elements until there is no improvement
+
+            size_before_adding = len(solution_set)
             solution_set, solution_set_obj_func_val = self._add_elements_until_no_improvement(
                 solution_set, solution_set_obj_func_val)
+            size_after_adding = len(solution_set)
+            print("Added", size_after_adding - size_before_adding, "elements", "(Current size:", size_after_adding, ")", "NO val reuse")
 
             # check if removing an element leads to improvement
             #   if it does, restart with adding elements
@@ -145,6 +155,8 @@ class DeterministicLocalSearch(AbstractOptimizer):
                 local_optimum_found = True
             else:
                 solution_set, solution_set_obj_func_val = an_improved_subset
+                size_after_deleting = len(solution_set)
+                print("Deleted ", size_after_adding - size_after_deleting, "elements.", "(Current size:", size_after_deleting, ")", "NO val reuse")
 
         return solution_set, solution_set_obj_func_val
 
