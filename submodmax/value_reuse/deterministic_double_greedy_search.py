@@ -29,6 +29,10 @@ class DeterministicDoubleGreedySearch(AbstractOptimizerValueReuse):
         super().__init__(objective_function, ground_set, debug)
 
     def optimize(self) -> Tuple[SetInfo, FuncInfo]:
+        if self.debug:
+            print("=====================================================================")
+            print("START submodmax.value_reuse.DeterministicDoubleGreedySearch optimizer")
+            print("=====================================================================")
         # X_prev: Set[E] = set()
         # Y_prev: Set[E] = self.ground_set.copy(
 

@@ -32,9 +32,13 @@ class DeterministicLocalSearch(AbstractOptimizer):
         super().__init__(objective_function, ground_set, debug)
         self.epsilon: float = epsilon
         n: int = len(ground_set)
-        self.rho: float = 0.5 * (1 + self.epsilon / (n * n))
+        self.rho: float = (1 + self.epsilon / (n * n))
 
     def optimize(self) -> Set[E]:
+        if self.debug:
+            print("==================================================")
+            print("START submodmax.DeterministicLocalSearch optimizer")
+            print("==================================================")
         solution_set, func_val1 = self._deterministic_local_search()  # type: Set[E], float
         complement_of_solution_set: Set[E] = self.ground_set - solution_set
         func_val2: float = self.objective_function.evaluate(complement_of_solution_set)

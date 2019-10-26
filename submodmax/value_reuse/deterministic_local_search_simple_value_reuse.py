@@ -1,7 +1,7 @@
 from typing import Set, Tuple, Optional, TypeVar
 
-from value_reuse.abstract_optimizer import AbstractSubmodularFunctionValueReuse, AbstractOptimizerValueReuse, FuncInfo
-from value_reuse.set_info import SetInfo
+from .abstract_optimizer import AbstractSubmodularFunctionValueReuse, AbstractOptimizerValueReuse, FuncInfo
+from .set_info import SetInfo
 
 E = TypeVar('E')
 
@@ -38,6 +38,11 @@ class DeterministicLocalSearchValueReuse(AbstractOptimizerValueReuse):
         self.empty_set = set()
 
     def optimize(self) -> Tuple[SetInfo, FuncInfo]:
+        if self.debug:
+            print("==================================================")
+            print("START DeterministicLocalSearchValueReuse optimizer")
+            print("==================================================")
+
         solution_set_info: SetInfo
         func_info1: FuncInfo
 
@@ -56,11 +61,21 @@ class DeterministicLocalSearchValueReuse(AbstractOptimizerValueReuse):
 
         if func_info1.func_value >= func_info2.func_value:
             if self.debug:
-                print("Objective value of solution set:", func_info1.func_value)
+                print("Choosing first set as solution.")
+                print("Objective value of chosen solution set:", func_info1.func_value)
+                print("Chosen solution set size:", solution_set_info.current_set_size, " / ", len(self.ground_set))
+                print("Objective value of other set:", func_info2.func_value)
+                print("Other set size:", complement_set_info.current_set_size, " / ", len(self.ground_set))
+
             return solution_set_info, func_info1
         else:
             if self.debug:
-                print("Objective value of solution set:", func_info2.func_value)
+                print("Choosing second set as solution.")
+                print("Objective value of chosen solution set:", func_info2.func_value)
+                print("Chosen solution set size:", complement_set_info.current_set_size, " / ", len(self.ground_set))
+                print("Objective value of other set:", func_info1.func_value)
+                print("Other set size:", solution_set_info.current_set_size, " / ", len(self.ground_set))
+
             return complement_set_info, func_info2
 
     def _get_initial_subset_and_objective_function_value(self) -> Tuple[SetInfo, FuncInfo]:
@@ -115,8 +130,12 @@ class DeterministicLocalSearchValueReuse(AbstractOptimizerValueReuse):
         local_optimum_found: bool = False
         while not local_optimum_found:
             # keep adding elements until there is no improvement
+
+            size_before_adding = solution_set_info.current_set_size
             solution_set_info, solution_set_func_info = self._add_elements_until_no_improvement(
                 solution_set_info, solution_set_func_info)
+            size_after_adding = solution_set_info.current_set_size
+            print("Added", size_after_adding - size_before_adding, "elements", "(Current size:", size_after_adding, ")", "WITH val reuse")
 
             # check if removing an element leads to improvement
             #   if it does, restart with adding elements
@@ -127,6 +146,8 @@ class DeterministicLocalSearchValueReuse(AbstractOptimizerValueReuse):
                 local_optimum_found = True
             else:
                 solution_set_info, solution_set_func_info = an_improved_subset
+                size_after_deleting = solution_set_info.current_set_size
+                print("Deleted ", size_after_adding - size_after_deleting, "elements", "(Current size:", size_after_deleting, ")", "WITH val reuse")
 
         return solution_set_info, solution_set_func_info
 
@@ -142,6 +163,10 @@ class DeterministicLocalSearchValueReuse(AbstractOptimizerValueReuse):
 
         improvement_possible_by_adding: bool = True
         while improvement_possible_by_adding:
+
+            if current_set_info.current_set is None:
+                raise Exception("Warning: this should never happen!")
+
             an_improved_subset: Optional[Tuple[SetInfo, FuncInfo]] = self._find_improved_subset_by_adding_one_element(
                 solution_set_info, solution_set_func_info)
             if an_improved_subset is not None:
@@ -179,12 +204,17 @@ class DeterministicLocalSearchValueReuse(AbstractOptimizerValueReuse):
                 continue
 
             if self.debug:
-                print("Testing if elem is good to add " + str(elem))
+                print("\tTesting if elem is good to add " + str(elem))
             added_elem: Set[E] = {elem}
 
             mod_solution_set_info.added_elems = added_elem
             func_info_mod_solution_set: FuncInfo = self.objective_function.evaluate(mod_solution_set_info,
                                                                                     solution_set_func_info)
+            diff = func_info_mod_solution_set.func_value - self.rho * solution_set_func_info.func_value
+
+            # print("\tfunc val mod set:", func_info_mod_solution_set.func_value)
+            # print("\tfunc val unmod  :", solution_set_func_info.func_value)
+            # print("\tdiff:", diff)
 
             if func_info_mod_solution_set.func_value > self.rho * solution_set_func_info.func_value:
                 if self.debug:
@@ -195,9 +225,15 @@ class DeterministicLocalSearchValueReuse(AbstractOptimizerValueReuse):
                 # mod_solution_set_info.current_set = mod_solution_set
                 mod_solution_set_info.current_set = mod_solution_set
 
+                if mod_solution_set_info.current_set is None:
+                    raise Exception("uninitialized current set")
+
                 return mod_solution_set_info, func_info_mod_solution_set
                 # return mod_solution_set_info, func_info_mod_solution_set
         # None of the remaining elements increase the objective function with more than (1 + epsilon / (n * n))
+        # if mod_solution_set_info.current_set is None:
+        #     raise Exception("uninitialized current set")
+
         return None
 
     def _find_improved_subset_by_discarding_one_element(self,
@@ -216,7 +252,7 @@ class DeterministicLocalSearchValueReuse(AbstractOptimizerValueReuse):
 
         for elem in solution_set_info.current_set:
             if self.debug:
-                print("Testing should remove elem " + str(elem))
+                print("\tTesting should remove elem " + str(elem))
 
             deleted_elem = {elem}
 
@@ -232,7 +268,7 @@ class DeterministicLocalSearchValueReuse(AbstractOptimizerValueReuse):
                     print("-----------------------")
                     print("Removing from solution set elem " + str(elem))
                     print("-----------------------")
-
+                mod_solution_set_info.current_set = mod_solution_set
                 return mod_solution_set_info, func_info_mod_solution_set
             else:
                 mod_solution_set.add(elem)

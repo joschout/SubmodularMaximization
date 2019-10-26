@@ -1,6 +1,6 @@
 from typing import Set, TypeVar, Optional, Tuple
 
-from value_reuse.set_info import SetInfo
+from .set_info import SetInfo
 
 E = TypeVar('E')
 
@@ -21,7 +21,8 @@ class AbstractSubmodularFunctionValueReuse:
 
 class AbstractOptimizerValueReuse:
 
-    def __init__(self, objective_function: AbstractSubmodularFunctionValueReuse, ground_set: Set[E], debug: bool = True):
+    def __init__(self, objective_function: AbstractSubmodularFunctionValueReuse, ground_set: Set[E],
+                 debug: bool = True):
         self.objective_function: AbstractSubmodularFunctionValueReuse = objective_function
         self.ground_set: Set[E] = ground_set
         self.debug: bool = debug

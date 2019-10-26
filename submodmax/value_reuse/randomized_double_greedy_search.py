@@ -34,6 +34,11 @@ class RandomizedDoubleGreedySearch(AbstractOptimizer):
         super().__init__(objective_function, ground_set, debug)
 
     def optimize(self) -> Set[E]:
+        if self.debug:
+            print("==================================================================")
+            print("START submodmax.value_reuse.RandomizedDoubleGreedySearch optimizer")
+            print("==================================================================")
+
         X_prev: Set[E] = set()
         Y_prev: Set[E] = self.ground_set.copy()
 

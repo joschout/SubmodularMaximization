@@ -36,6 +36,10 @@ class DeterministicLocalSearchPyIDS(AbstractOptimizer):
         self.rho: float = (1 + self.epsilon / (n * n))
 
     def optimize(self) -> Set[E]:
+        if self.debug:
+            print("=======================================================")
+            print("START submodmax.DeterministicLocalSearchPyIDS optimizer")
+            print("=======================================================")
         solution_set: Set[E] = self._deterministic_local_search()
         complement_of_solution_set: Set[E] = self.ground_set - solution_set
 
@@ -79,14 +83,23 @@ class DeterministicLocalSearchPyIDS(AbstractOptimizer):
         restart_computations: bool = False
 
         while True:
+            if self.debug:
+                print("Current solution set size:", len(solution_set))
+                print("Current solution set:")
+                for i, elem in enumerate(solution_set, 1):
+                    print("\t", i, elem)
+
 
             # -- Adding elements to S
             # Keep adding elements to S so long as the improvement is larger than (1 + epsilon)/ n²
             # i.e. f(S + e) - f(S) > (1 + epsilon)/ n²
+            if self.debug:
+                print("Start check of adding 1 elem")
+
             elem: E
             for elem in self.ground_set - solution_set:
                 if self.debug:
-                    print("Testing if elem is good to add " + str(elem))
+                    print("\tTesting if elem is good to add " + str(elem))
 
                 modified_solution_set: Set[E] = solution_set | {elem}
                 func_val: float = self.objective_function.evaluate(modified_solution_set)
@@ -102,6 +115,7 @@ class DeterministicLocalSearchPyIDS(AbstractOptimizer):
                         print("Adding to the solution set elem:  " + str(elem))
                         print("-----------------------")
                     break
+            print("No good addition found")
 
             # ----------------
 
@@ -110,18 +124,19 @@ class DeterministicLocalSearchPyIDS(AbstractOptimizer):
                 continue
 
             # --- Discarding elements of S ---
-
+            if self.debug:
+                print("Start check of deleting 1 elem")
             elem: E
             for elem in solution_set:
                 if self.debug:
-                    print("Testing should remove elem " + str(elem))
+                    print("\tTesting should remove elem " + str(elem))
 
                 modified_solution_set: Set[E] = solution_set - {elem}
                 func_val: float = self.objective_function.evaluate(modified_solution_set)
 
                 if func_val > self.rho * soln_set_obj_func_value:
                     # add this element to solution set and recompute omegas
-                    solution_set.add(elem)
+                    solution_set.remove(elem)
                     soln_set_obj_func_value = func_val
                     restart_computations = True
 
@@ -131,6 +146,7 @@ class DeterministicLocalSearchPyIDS(AbstractOptimizer):
                         print("-----------------------")
                     break
             # ----------------
+            print("No good deletion found")
 
             if restart_computations:
                 restart_computations = False
