@@ -88,7 +88,7 @@ class DeterministicLocalSearch(AbstractOptimizer):
         for elem in self.ground_set:
             if elem not in solution_set:
                 if self.debug:
-                    print("Testing if elem is good to add " + str(elem))
+                    print("\tTesting if elem is good to add " + str(elem))
 
                 mod_solution_set: Set[E] = solution_set | {elem}
                 func_val_mod_solution_set: float = self.objective_function.evaluate(mod_solution_set)
@@ -113,7 +113,7 @@ class DeterministicLocalSearch(AbstractOptimizer):
         elem: E
         for elem in solution_set:
             if self.debug:
-                print("Testing should remove elem " + str(elem))
+                print("\tTesting should remove elem " + str(elem))
 
             mod_solution_set: Set[E] = solution_set - {elem}
             func_val_mod_solution_set = self.objective_function.evaluate(mod_solution_set)

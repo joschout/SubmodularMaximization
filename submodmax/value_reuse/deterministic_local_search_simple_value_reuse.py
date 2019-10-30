@@ -113,6 +113,13 @@ class DeterministicLocalSearchValueReuse(AbstractOptimizerValueReuse):
         if best_func_info is None:
             raise Exception("you should not be able to reach this")
 
+        if self.debug:
+            print("Initial solution set size:", best_singleton_set_info.current_set_size)
+            print("Current solution set:")
+            for i, elem in enumerate(best_singleton_set_info.current_set, 1):
+                print("\t", i, elem)
+            print("func val:", best_func_info.func_value)
+
         return best_singleton_set_info, best_func_info
 
     def _deterministic_local_search(self) -> Tuple[SetInfo, FuncInfo]:
