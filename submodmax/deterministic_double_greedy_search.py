@@ -1,6 +1,7 @@
 from typing import Set, TypeVar
 
-from abstract_double_greedy_search import AbstractDoubleGreedySearch
+from .double_greedy_search_decision_strategy import DeterministicDoubleGreedySearchDecisionStrategy
+from .abstract_double_greedy_search import AbstractDoubleGreedySearch
 from .abstract_optimizer import AbstractSubmodularFunction
 
 E = TypeVar('E')
@@ -28,21 +29,7 @@ class DeterministicDoubleGreedySearch(AbstractDoubleGreedySearch):
         super().__init__(objective_function, ground_set, debug)
 
         self.class_name = "submodmax.DeterministicDoubleGreedySearch"
+        self.decision_strategy = DeterministicDoubleGreedySearchDecisionStrategy()
 
-    def should_update_X(self, a: float, b: float):
-
-        should_update_X = a >=b
-
-        if self.debug:
-            print("\t\ta =", a)
-            print("\t\tb =", b)
-
-            if should_update_X:
-                print("\ta >= b")
-                print("\tUPDATE X_prev:")
-            else:
-                print("\ta < b")
-                print("\tUPDATE Y_prev:")
-
-        return should_update_X
-
+    def should_update_X(self, a: float, b: float) -> bool:
+        return self.decision_strategy.should_update_X(a, b, self.debug)

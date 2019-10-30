@@ -1,8 +1,6 @@
 import warnings
 from typing import Set, TypeVar
 
-import numpy as np
-
 from .abstract_optimizer import AbstractOptimizer, AbstractSubmodularFunction
 
 E = TypeVar('E')
@@ -25,13 +23,13 @@ class AbstractDoubleGreedySearch(AbstractOptimizer):
 
         self.class_name = "submodmax.AbstractDoubleGreedySearch"
 
-    def should_update_X(self, a: float, b: float):
+    def should_update_X(self, a: float, b: float) -> bool:
         raise NotImplementedError('abstract method')
 
     def optimize(self) -> Set[E]:
         if self.debug:
             print("======================================================")
-            print("START", self.class_name)
+            print("START", self.class_name, 'optimizer')
             print("======================================================")
 
         X_prev: Set[E] = set()
