@@ -1,8 +1,8 @@
 import warnings
 from typing import Set, TypeVar, Tuple
 
-from value_reuse.abstract_optimizer import AbstractSubmodularFunctionValueReuse, AbstractOptimizerValueReuse, FuncInfo
-from value_reuse.set_info import SetInfo
+from submodmax.value_reuse.abstract_optimizer import AbstractSubmodularFunctionValueReuse, AbstractOptimizerValueReuse, FuncInfo
+from submodmax.value_reuse.set_info import SetInfo
 
 E = TypeVar('E')
 

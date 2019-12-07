@@ -7,8 +7,8 @@ E = TypeVar('E')
 
 class FuncInfo:
 
-    def __init__(self, func_value: int):
-        self.func_value: int = func_value
+    def __init__(self, func_value: float):
+        self.func_value: float = func_value
 
 
 class AbstractSubmodularFunctionValueReuse:

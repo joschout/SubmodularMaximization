@@ -1,8 +1,8 @@
 from typing import Set, TypeVar
 
-from double_greedy_search_decision_strategy import RandomizedDoubleGreedySearchDecisionStrategy
-from value_reuse.abstract_double_greedy_search import AbstractDoubleGreedySearchValueReuse
-from value_reuse.abstract_optimizer import AbstractSubmodularFunctionValueReuse
+from submodmax.double_greedy_search_decision_strategy import RandomizedDoubleGreedySearchDecisionStrategy
+from submodmax.value_reuse.abstract_double_greedy_search import AbstractDoubleGreedySearchValueReuse
+from submodmax.value_reuse.abstract_optimizer import AbstractSubmodularFunctionValueReuse
 
 E = TypeVar('E')
 
