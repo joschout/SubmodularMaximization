@@ -1,5 +1,5 @@
 import warnings
-from typing import Set, TypeVar, Tuple
+from typing import Set, TypeVar, Tuple, Iterable
 
 from submodmax.value_reuse.abstract_optimizer import AbstractSubmodularFunctionValueReuse, AbstractOptimizerValueReuse, FuncInfo
 from submodmax.value_reuse.set_info import SetInfo
@@ -26,6 +26,9 @@ class AbstractDoubleGreedySearchValueReuse(AbstractOptimizerValueReuse):
         self.class_name = 'submodmax.value_reuse.AbstractDoubleGreedySearch'
 
     def should_update_X(self, a: float, b: float) -> bool:
+        raise NotImplementedError('abstract method')
+
+    def ground_set_iterator(self) -> Iterable[E]:
         raise NotImplementedError('abstract method')
 
     def optimize(self) -> Tuple[SetInfo, FuncInfo]:
@@ -65,7 +68,7 @@ class AbstractDoubleGreedySearchValueReuse(AbstractOptimizerValueReuse):
                   func_info_Y_prev.func_value)
 
         elem: E
-        for i, elem in enumerate(self.ground_set, 1):
+        for i, elem in enumerate(self.ground_set_iterator(), 1):
 
             singleton_set: Set[E] = {elem}
 

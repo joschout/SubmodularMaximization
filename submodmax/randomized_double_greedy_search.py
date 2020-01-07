@@ -1,4 +1,5 @@
-from typing import Set, TypeVar
+import random
+from typing import Set, TypeVar, List, Optional, Iterable
 
 from .double_greedy_search_decision_strategy import RandomizedDoubleGreedySearchDecisionStrategy
 from .abstract_double_greedy_search import AbstractDoubleGreedySearch
@@ -35,6 +36,46 @@ class RandomizedDoubleGreedySearch(AbstractDoubleGreedySearch):
         self.class_name = "submodmax.RandomizedDoubleGreedySearch"
         self.decision_strategy = RandomizedDoubleGreedySearchDecisionStrategy()
 
+        self.n_tries = 10
+
     def should_update_X(self, a: float, b: float):
         return self.decision_strategy.should_update_X(a, b, self.debug)
 
+    def ground_set_iterator(self) -> Iterable[E]:
+        ground_set_list: List[E] = list(self.ground_set)
+        random.shuffle(ground_set_list)
+        return ground_set_list
+
+    def optimize(self) -> Set[E]:
+        if self.n_tries < 1:
+            raise Exception(str(self.__class__), " should have self.n_tries >= 1, but has", str(self.n_tries))
+
+        best_set: Optional[Set[E]] = None
+        f_best_set = float('-inf')
+
+        for i in range(self.n_tries):
+            if self.debug:
+                print("++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+                print("START try", str(i+1), "/", str(self.n_tries), self.class_name, 'optimizer')
+                print("++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+
+            current_solution_set: Set[E] = super(RandomizedDoubleGreedySearch, self).optimize()
+            f_current_solution_set: float = self.objective_function.evaluate(current_solution_set)
+
+            if f_current_solution_set > f_best_set:
+                if self.debug:
+                    print("++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+                    print("Found solution with a higher f-value:", str(f_current_solution_set), ">", str(f_best_set))
+                    print("++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+                f_best_set = f_current_solution_set
+                best_set = current_solution_set
+            else:
+                if self.debug:
+                    print("++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+                    print("Keep previous solution with f-value:", str(f_best_set))
+                    print("++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+
+        if best_set is None:
+            raise Exception("best set should not be None")
+
+        return best_set

@@ -1,8 +1,10 @@
-from typing import Set, TypeVar
+import random
+from typing import Set, TypeVar, Iterable, List, Optional, Tuple
 
 from submodmax.double_greedy_search_decision_strategy import RandomizedDoubleGreedySearchDecisionStrategy
 from submodmax.value_reuse.abstract_double_greedy_search import AbstractDoubleGreedySearchValueReuse
-from submodmax.value_reuse.abstract_optimizer import AbstractSubmodularFunctionValueReuse
+from submodmax.value_reuse.abstract_optimizer import AbstractSubmodularFunctionValueReuse, FuncInfo
+from submodmax.value_reuse.set_info import SetInfo
 
 E = TypeVar('E')
 
@@ -36,5 +38,52 @@ class RandomizedDoubleGreedySearch(AbstractDoubleGreedySearchValueReuse):
         self.class_name = "submodmax.RandomizedDoubleGreedySearch"
         self.decision_strategy = RandomizedDoubleGreedySearchDecisionStrategy()
 
+        self.n_tries = 10
+
     def should_update_X(self, a: float, b: float):
         return self.decision_strategy.should_update_X(a, b, self.debug)
+
+    def ground_set_iterator(self) -> Iterable[E]:
+        ground_set_list: List[E] = list(self.ground_set)
+        random.shuffle(ground_set_list)
+        return ground_set_list
+
+    def optimize(self) -> Tuple[SetInfo, FuncInfo]:
+        if self.n_tries < 1:
+            raise Exception(str(self.__class__), " should have self.n_tries >= 1, but has", str(self.n_tries))
+
+        best_set_info: Optional[SetInfo] = None
+        func_info_best_set: Optional[FuncInfo] = None
+
+        for i in range(self.n_tries):
+            if self.debug:
+                print("++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+                print("START try", str(i+1), "/", str(self.n_tries), self.class_name, 'optimizer')
+                print("++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+
+            current_rule_set_info: SetInfo
+            current_obj_func_val_info: FuncInfo
+            current_rule_set_info, current_obj_func_val_info = super(RandomizedDoubleGreedySearch, self).optimize()
+
+            if best_set_info is None:
+                best_set_info = current_rule_set_info
+                func_info_best_set = current_obj_func_val_info
+            elif current_obj_func_val_info.func_value > func_info_best_set.func_value:
+                if self.debug:
+                    print("++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+                    print("Found solution with a higher f-value:",
+                          str(current_obj_func_val_info.func_value), ">", str(func_info_best_set.func_value))
+                    print("++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+                best_set_info = current_rule_set_info
+                func_info_best_set = current_obj_func_val_info
+            else:
+                if self.debug:
+                    print("++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+                    print("Keep previous solution with f-value:", str(func_info_best_set.func_value))
+                    print("++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+
+        if best_set_info is None:
+            raise Exception("best set should not be None")
+
+        return best_set_info, func_info_best_set
+

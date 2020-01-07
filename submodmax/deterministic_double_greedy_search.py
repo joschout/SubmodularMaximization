@@ -1,4 +1,4 @@
-from typing import Set, TypeVar
+from typing import Set, TypeVar, Iterable
 
 from .double_greedy_search_decision_strategy import DeterministicDoubleGreedySearchDecisionStrategy
 from .abstract_double_greedy_search import AbstractDoubleGreedySearch
@@ -33,3 +33,6 @@ class DeterministicDoubleGreedySearch(AbstractDoubleGreedySearch):
 
     def should_update_X(self, a: float, b: float) -> bool:
         return self.decision_strategy.should_update_X(a, b, self.debug)
+
+    def ground_set_iterator(self) -> Iterable[E]:
+        return self.ground_set

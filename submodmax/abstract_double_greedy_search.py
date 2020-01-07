@@ -1,5 +1,5 @@
 import warnings
-from typing import Set, TypeVar
+from typing import Set, TypeVar, Iterable
 
 from .abstract_optimizer import AbstractOptimizer, AbstractSubmodularFunction
 
@@ -26,6 +26,9 @@ class AbstractDoubleGreedySearch(AbstractOptimizer):
     def should_update_X(self, a: float, b: float) -> bool:
         raise NotImplementedError('abstract method')
 
+    def ground_set_iterator(self) -> Iterable[E]:
+        raise NotImplementedError('abstract method')
+
     def optimize(self) -> Set[E]:
         if self.debug:
             print("======================================================")
@@ -46,7 +49,7 @@ class AbstractDoubleGreedySearch(AbstractOptimizer):
             print("Y0:  size: ", len(Y_prev), "/", ground_set_size, ", f(S): ", f_on_Y_prev)
 
         elem: E
-        for i, elem in enumerate(self.ground_set, 1):
+        for i, elem in enumerate(self.ground_set_iterator(), 1):
             X_prev_plus_elem: Set[E] = X_prev | {elem}
             f_on_X_prev_plus_elem: float = self.objective_function.evaluate(X_prev_plus_elem)
             a: float = f_on_X_prev_plus_elem - f_on_X_prev
