@@ -9,6 +9,9 @@ E = TypeVar('E')
 
 
 class RandomizedDoubleGreedySearch(AbstractDoubleGreedySearch):
+
+    N_TRIES = 10
+
     """
     Randomized (Double Greedy) Unconstrained submodular maximization, by Buchbinder and Feldman
 
@@ -36,7 +39,7 @@ class RandomizedDoubleGreedySearch(AbstractDoubleGreedySearch):
         self.class_name = "submodmax.RandomizedDoubleGreedySearch"
         self.decision_strategy = RandomizedDoubleGreedySearchDecisionStrategy()
 
-        self.n_tries = 10
+        self.n_tries = RandomizedDoubleGreedySearch.N_TRIES
 
     def should_update_X(self, a: float, b: float):
         return self.decision_strategy.should_update_X(a, b, self.debug)
