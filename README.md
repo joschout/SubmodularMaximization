@@ -25,16 +25,38 @@ For a lack of a better name, this repository calls these algorithms:
 
 The following describes how to use this repository in your own implementation.
 
-## The set function
+## The submodular function to be optimized.
+
+Here we describe our interface submodular functions should have to work with this package. We provide two different interfaces: one for general functions, and one for functions for which we can use a computational trick to speed things up.
+
+Now we describe our case where we can speed things up. Submodular optimization often repeatedly evaluates the function to be optimized, sequentially using different sets as input. Evaluating the function can be costly: the computational effort is often a function of the elements in the set. However, due to the way some optimization algorithms (such as Greedy Search) work, the input sets used for the sequence of evaluations do not differ that much. Often, only one element is added or removed at a time. For such functions, it is sometimes possible to reuse the function value obtained from the previous evaluation, and update it with the difference corresponding to the changed set. This can drastically reduced the number of work. 
+
+An example is the Interpretable Decision Set objective function, of which the evaluation time in function of the input set size improves dramatically when the function value of the previous evaluation is reused, compared to recomputing the whole evaluation:
+
+![Example animations of falling marbles](./images/ids_regular_vs_value_reuse_time_ifo_current_set_size_segment.jpeg)
+
+### Submodular functions - without function value reuse
 To use this in your own code, your function to be maximized should be contained in an object of a class inheriting from `AbstractSubmodularFunction`. This class looks as follows:
 ``` Python 
 class AbstractSubmodularFunction:
     def evaluate(self, input_set: Set[E]) -> float:
         raise NotImplementedError('Abstract Method')
 ```
-That is, `AbstractSubmodularFunction` requires its subclasses to implement an `evaluate()` method, taking as input a `Set[E]` and resulting in a `float`. This method should evaluate the set function on the given set, returning the value of the function. This class corresponds to the *'value oracle'*, which should be able to return the value of the function to be maximixed for every possible subset of the *ground set*.
+That is, `AbstractSubmodularFunction` requires its subclasses to implement an `evaluate()` method, taking as input a `Set[E]` and resulting in a `float`. This method should evaluate the set function on the given set, returning the value of the function. This class corresponds to the *'value oracle'*, which should be able to return the value of the function to be maximized for every possible subset of the *ground set*.
 
 Typically, your own class inheriting `AbstractSubmodularFunction` can contain instance variables for parameters required by the objective function.
+
+## Submodular functions - with function value reuse
+To use this in your own code, your function to be maximized should be contained in an object of a class inheriting from `AbstractSubmodularFunctionValueReuse`. This class looks as follows:
+``` Python 
+class AbstractSubmodularFunctionValueReuse:
+
+    def evaluate(self, current_set_info: SetInfo,
+                 previous_func_info: Optional[FuncInfo],
+                 ) -> FuncInfo:
+        raise NotImplementedError('abstract method')
+```
+
 
 ## The Optimizers
 Every included optimizer inherits the class `AbstractOptimizer`. Each optimizer should be initialized with at least two arguments:
@@ -53,6 +75,18 @@ class AbstractOptimizer:
     def optimize(self) -> Set[E]:
         raise NotImplementedError("abstract method")
 ```
+
+## Installation
+
+You can install this as a python package as follows:
+
+```bash
+git clone https://github.com/joschout/SubmodularMaximization.git
+cd SubmodularMaximization/
+python setup.py install develop --user
+```
+
+To use it in your project, you can use `from submodmax import <what-you-need>`.
 
 ## Reason behind this repository
 
