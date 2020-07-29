@@ -1,5 +1,7 @@
 # Unconstrained Submodular Maximization
-A collection of optimization algorithms for Unconstrained Submodular Maximization (USM) of non-monotone non-negative set functions. As maximizing such a function is NP-hard, finding a maximum for such a function is often done using a greedy approach resulting in an approximate solution. This repository contains Python implementations of a couple of optimization algorithms tackling USM. 
+A collection of optimization algorithms for Unconstrained Submodular Maximization (USM) of non-monotone non-negative set functions.
+ 
+ Maximizing a non-monotone submodular function is NP-hard. This means there is no guarantee an optimal solution can be found within a polynomial number of function evaluations.  As maximization is NP-hard, finding a 'maximum' is often done using approximation algorithms resulting in an approximate solution. This repository contains Python implementations of a couple of optimization algorithms tackling USM. 
 
 ## Included algorithms
 
@@ -27,7 +29,7 @@ The following describes how to use this repository in your own implementation.
 
 ### The submodular function to be optimized.
 
-Here we describe our interface submodular functions should have to work with this package. We provide two different interfaces: one for general functions, and one for functions for which we can use a computational trick to speed things up.
+Here we describe the interface submodular functions should have to work with this package. We provide two different interfaces: one for general functions, and one for functions for which we can use a computational trick to speed things up. 
 
 Now we describe our case where we can speed things up. Submodular optimization often repeatedly evaluates the function to be optimized, sequentially using different sets as input. Evaluating the function can be costly: the computational effort is often a function of the elements in the set. However, due to the way some optimization algorithms (such as Greedy Search) work, the input sets used for the sequence of evaluations do not differ that much. Often, only one element is added or removed at a time. For such functions, it is sometimes possible to reuse the function value obtained from the previous evaluation, and update it with the difference corresponding to the changed set. This can drastically reduced the number of work. 
 
