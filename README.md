@@ -25,7 +25,7 @@ For a lack of a better name, this repository calls these algorithms:
 
 The following describes how to use this repository in your own implementation.
 
-## The submodular function to be optimized.
+### The submodular function to be optimized.
 
 Here we describe our interface submodular functions should have to work with this package. We provide two different interfaces: one for general functions, and one for functions for which we can use a computational trick to speed things up.
 
@@ -46,7 +46,7 @@ That is, `AbstractSubmodularFunction` requires its subclasses to implement an `e
 
 Typically, your own class inheriting `AbstractSubmodularFunction` can contain instance variables for parameters required by the objective function.
 
-## Submodular functions - with function value reuse
+### Submodular functions - with function value reuse
 To use this in your own code, your function to be maximized should be contained in an object of a class inheriting from `AbstractSubmodularFunctionValueReuse`. This class looks as follows:
 ``` Python 
 class AbstractSubmodularFunctionValueReuse:
@@ -58,7 +58,7 @@ class AbstractSubmodularFunctionValueReuse:
 ```
 
 
-## The Optimizers
+### The Optimizers
 Every included optimizer inherits the class `AbstractOptimizer`. Each optimizer should be initialized with at least two arguments:
 1. the objective function to be optimized
 2. the ground set of items. The optimizers will search over the power set of this ground set.
