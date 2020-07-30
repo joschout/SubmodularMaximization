@@ -1,8 +1,4 @@
 # Unconstrained Submodular Maximization
-A collection of optimization algorithms for Unconstrained Submodular Maximization (USM) of non-monotone non-negative set functions.
- 
- Maximizing a non-monotone submodular function is NP-hard. This means there is no guarantee an optimal solution can be found within a polynomial number of function evaluations.  As maximization is NP-hard, finding a 'maximum' is often done using approximation algorithms resulting in an approximate solution. This repository contains Python implementations of a couple of optimization algorithms tackling USM. 
-
 __________________________________
 [Included algorithms](https://github.com/joschout/SubmodularMaximization#included-algorithms) - 
 [Usage](https://github.com/joschout/SubmodularMaximization#usage) - 
@@ -10,6 +6,11 @@ __________________________________
 [Reason behind this repo](https://github.com/joschout/SubmodularMaximization#reason-behind-this-repository) - 
 [References](https://github.com/joschout/SubmodularMaximization#references)
 _________________
+
+
+A collection of optimization algorithms for Unconstrained Submodular Maximization (USM) of non-monotone non-negative set functions.
+ 
+ Maximizing a non-monotone submodular function is NP-hard. This means there is no guarantee an optimal solution can be found within a polynomial number of function evaluations.  As maximization is NP-hard, finding a 'maximum' is often done using approximation algorithms resulting in an approximate solution. This repository contains Python implementations of a couple of optimization algorithms tackling USM. 
 
 ## Included algorithms
 
