@@ -3,6 +3,14 @@ A collection of optimization algorithms for Unconstrained Submodular Maximizatio
  
  Maximizing a non-monotone submodular function is NP-hard. This means there is no guarantee an optimal solution can be found within a polynomial number of function evaluations.  As maximization is NP-hard, finding a 'maximum' is often done using approximation algorithms resulting in an approximate solution. This repository contains Python implementations of a couple of optimization algorithms tackling USM. 
 
+__________________________________
+[Included algorithms](https://github.com/joschout/SubmodularMaximization#included-algorithms) - 
+[Usage](https://github.com/joschout/SubmodularMaximization#usage) - 
+[Installing submodmax](https://github.com/joschout/SubmodularMaximization#installing-submodmax) - 
+[Reason behind this repo](https://github.com/joschout/SubmodularMaximization#reason-behind-this-repository) - 
+[References](https://github.com/joschout/SubmodularMaximization#references)
+_________________
+
 ## Included algorithms
 
 First, this repository includes the three algorithms proposed by Feige, U., Mirrokni, V. S., and Vondrák, J. in their paper:
@@ -78,7 +86,7 @@ class AbstractOptimizer:
         raise NotImplementedError("abstract method")
 ```
 
-## Installation
+## Installing submodmax
 
 You can install this as a python package as follows:
 
@@ -88,7 +96,10 @@ cd SubmodularMaximization/
 python setup.py install develop --user
 ```
 
-To use it in your project, you can use `from submodmax import <what-you-need>`.
+To use it in your project, you can use:
+``` Python 
+from submodmax import <what-you-need>
+```
 
 ## Reason behind this repository
 
