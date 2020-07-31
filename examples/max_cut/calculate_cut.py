@@ -15,8 +15,6 @@ def has_correct_shape(matrix: np.ndarray):
         return False
     return True
 
-# cut_from_set: Set[VIndex] = {0}
-
 
 def powerset(iterable):
     """
