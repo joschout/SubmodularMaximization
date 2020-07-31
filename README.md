@@ -1,16 +1,17 @@
 # Unconstrained Submodular Maximization
-__________________________________
-[Included algorithms](https://github.com/joschout/SubmodularMaximization#included-algorithms) - 
-[Usage](https://github.com/joschout/SubmodularMaximization#usage) - 
-[Installing submodmax](https://github.com/joschout/SubmodularMaximization#installing-submodmax) - 
-[Reason behind this repo](https://github.com/joschout/SubmodularMaximization#reason-behind-this-repository) - 
-[References](https://github.com/joschout/SubmodularMaximization#references)
-_________________
-
 
 A collection of optimization algorithms for Unconstrained Submodular Maximization (USM) of non-monotone non-negative set functions.
  
  Maximizing a non-monotone submodular function is NP-hard. This means there is no guarantee an optimal solution can be found within a polynomial number of function evaluations.  As maximization is NP-hard, finding a 'maximum' is often done using approximation algorithms resulting in an approximate solution. This repository contains Python implementations of a couple of optimization algorithms tackling USM. 
+
+## Table of Contents
+
+* [Included algorithms](https://github.com/joschout/SubmodularMaximization#included-algorithms)
+* [Basic example](https://github.com/joschout/SubmodularMaximization#basic-example)
+* [Installation](https://github.com/joschout/SubmodularMaximization#installing-submodmax)
+* [Usage](https://github.com/joschout/SubmodularMaximization#usage)
+* [Reason behind this repo](https://github.com/joschout/SubmodularMaximization#reason-behind-this-repository)
+* [References](https://github.com/joschout/SubmodularMaximization#references)
 
 ## Included algorithms
 
@@ -31,6 +32,72 @@ For a lack of a better name, this repository calls these algorithms:
 * Deterministic Double Greedy Search (Deterministic USM in the original paper)
 * Randomized Double Greedy Search (Randomized USM in the original paper)
 
+## Basic example
+
+As a minimal example, we can use the simple submodular function used in Andreas Krause's great [tutorial slides at www.submodularity.org](www.submodularity.org). This function defines the following mapping:
+
+| input_set | output |
+|-----------|--------|
+| {}        | 0      |
+| {1}       | -1     |
+| {2}       | 2      |
+| {1, 2}    | 0      |
+
+Here, the **ground set** of interest is defined as: `{ 1, 2 }`. Thus, the goal is to find the subset of this ground set that maximizes the submodular function. In this case, the optimal solution is `{2}` Here, we can do this as follows:
+
+```python
+from typing import Set, TypeVar
+
+from submodmax.abstract_optimizer import AbstractSubmodularFunction, AbstractOptimizer
+from submodmax.randomized_double_greedy_search import RandomizedDoubleGreedySearch
+
+E = TypeVar('E')
+
+class AndreasKrauseExampleObjectiveFunction(AbstractSubmodularFunction):
+    def evaluate(self, input_set: Set[int]) -> float:
+        if input_set == set():
+            return 0
+        elif input_set == {1}:
+            return -1
+        elif input_set == {2}:
+            return 2
+        elif input_set == {1, 2}:
+            return 0
+        else:
+            raise Exception(f"The input set was not expected: {input_set}")
+# -------------
+ground_set: Set[int] = {1, 2}
+submodular_objective_function = AndreasKrauseExampleObjectiveFunction()
+
+optimizer: AbstractOptimizer = RandomizedDoubleGreedySearch(
+    objective_function=submodular_objective_function,
+    ground_set=ground_set,
+    debug=False
+)
+local_optimum: Set[int] = optimizer.optimize()
+true_optimum: Set[int] = {2}
+print(local_optimum)
+if true_optimum == local_optimum:
+    print(f"Found correct local optimum: {local_optimum}")
+else:
+    print(f"Found {local_optimum}, but should be {true_optimum}")
+
+```
+
+## Installation
+
+You can install this repositiory as a python package in a Python 3.6+ environment as follows:
+
+```bash
+git clone https://github.com/joschout/SubmodularMaximization.git
+cd SubmodularMaximization/
+python setup.py install develop [--user]
+```
+
+To use it in your project, you can use:
+``` Python 
+from submodmax import <what-you-need>
+```
 
 ## Usage
 
@@ -87,20 +154,6 @@ class AbstractOptimizer:
         raise NotImplementedError("abstract method")
 ```
 
-## Installing submodmax
-
-You can install this as a python package as follows:
-
-```bash
-git clone https://github.com/joschout/SubmodularMaximization.git
-cd SubmodularMaximization/
-python setup.py install develop --user
-```
-
-To use it in your project, you can use:
-``` Python 
-from submodmax import <what-you-need>
-```
 
 ## Reason behind this repository
 
