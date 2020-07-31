@@ -1,6 +1,6 @@
 from typing import Set
 
-from abstract_optimizer import E
+from .abstract_optimizer import E
 from .abstract_optimizer import AbstractOptimizer
 
 
