@@ -1,8 +1,8 @@
 from typing import Tuple
 
 from submodmax.value_reuse.abstract_optimizer import AbstractOptimizerValueReuse
-from value_reuse.abstract_optimizer import FuncInfo
-from value_reuse.set_info import SetInfo
+from submodmax.value_reuse.abstract_optimizer import FuncInfo
+from submodmax.value_reuse.set_info import SetInfo
 
 
 class GroundSetReturner(AbstractOptimizerValueReuse):
