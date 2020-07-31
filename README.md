@@ -141,7 +141,6 @@ An example is the Interpretable Decision Set objective function, of which the ev
 To use this in your own code, you can have a look at the basic example in [./examples/value_reuse/example_Andreas_Krause.py](./examples/value_reuse/example_Andreas_Krause.py). More specifically, the submodular function to be maximized should be contained in an object of a class inheriting from `AbstractSubmodularFunctionValueReuse`. This class looks as follows:
 ``` Python 
 class AbstractSubmodularFunctionValueReuse:
-
     def evaluate(self, current_set_info: SetInfo,
                  previous_func_info: Optional[FuncInfo],
                  ) -> FuncInfo:
