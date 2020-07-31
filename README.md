@@ -53,7 +53,7 @@ from submodmax.randomized_double_greedy_search import RandomizedDoubleGreedySear
 
 E = TypeVar('E')
 
-class AndreasKrauseExampleObjectiveFunction(AbstractSubmodularFunction):
+class ExampleFunction(AbstractSubmodularFunction):
     def evaluate(self, input_set: Set[int]) -> float:
         if input_set == set():
             return 0
@@ -67,7 +67,7 @@ class AndreasKrauseExampleObjectiveFunction(AbstractSubmodularFunction):
             raise Exception(f"The input set was not expected: {input_set}")
 # -------------
 ground_set: Set[int] = {1, 2}
-submodular_objective_function = AndreasKrauseExampleObjectiveFunction()
+submodular_objective_function = ExampleFunction()
 
 optimizer: AbstractOptimizer = RandomizedDoubleGreedySearch(
     objective_function=submodular_objective_function,
