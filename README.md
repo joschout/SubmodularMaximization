@@ -11,8 +11,8 @@ A collection of optimization algorithms for Unconstrained Submodular Maximizatio
 * [Installation](https://github.com/joschout/SubmodularMaximization#installing-submodmax)
 * [Usage](https://github.com/joschout/SubmodularMaximization#usage)
     * [The submodular function to be maximized](https://github.com/joschout/SubmodularMaximization#the-submodular-function-to-be-maximized)
-        * [General submodular functions - evaluation without function value reuse]
-        * []
+        * [General submodular functions - evaluation without function value reuse](https://github.com/joschout/SubmodularMaximization#general-submodular-functions---evaluation-without-function-value-reuse)
+        * [Speeding up submodular functions evaluation with function value reuse](https://github.com/joschout/SubmodularMaximization#speeding-up-submodular-functions-evaluation-with-function-value-reuse)
     * [The optimizers](https://github.com/joschout/SubmodularMaximization#the-optimizers)
     
 * [Reason behind this repo](https://github.com/joschout/SubmodularMaximization#reason-behind-this-repository)
@@ -129,7 +129,7 @@ That is, `AbstractSubmodularFunction` requires its subclasses to implement an `e
 Typically, your own class inheriting `AbstractSubmodularFunction` can contain instance variables for parameters required by the objective function.
 
 
-### Speeding up submodular functions evaluation with function value reuse
+#### Speeding up submodular functions evaluation with function value reuse
 
 Now we describe the case where we might speed things up. Submodular optimization often repeatedly evaluates the function to be optimized, sequentially using different sets as input. Evaluating the function can be costly: the computational effort is often a function of the elements in the set. However, due to the way some optimization algorithms (such as Greedy Search) work, the input sets used for the sequence of evaluations do not differ that much. Often, only one element is added or removed at a time. For such functions, it is sometimes possible to reuse the function value obtained from the previous evaluation, and update it with the difference corresponding to the changed set. This can drastically reduced the number of work. 
 
