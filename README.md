@@ -6,9 +6,9 @@ A collection of optimization algorithms for Unconstrained Submodular Maximizatio
 
 ## Table of Contents
 
-* [Included algorithms](https://github.com/joschout/SubmodularMaximization#included-algorithms)
 * [Basic example](https://github.com/joschout/SubmodularMaximization#basic-example)
 * [Installation](https://github.com/joschout/SubmodularMaximization#installing-submodmax)
+* [Included submodular maximization algorithms](https://github.com/joschout/SubmodularMaximization#included-submodular-maximization-algorithms)
 * [Usage](https://github.com/joschout/SubmodularMaximization#usage)
     * [The submodular function to be maximized](https://github.com/joschout/SubmodularMaximization#the-submodular-function-to-be-maximized)
         * [General submodular functions - evaluation without function value reuse](https://github.com/joschout/SubmodularMaximization#general-submodular-functions---evaluation-without-function-value-reuse)
@@ -17,25 +17,6 @@ A collection of optimization algorithms for Unconstrained Submodular Maximizatio
     
 * [Reason behind this repo](https://github.com/joschout/SubmodularMaximization#reason-behind-this-repository)
 * [References](https://github.com/joschout/SubmodularMaximization#references)
-
-## Included algorithms
-
-First, this repository includes the three algorithms proposed by Feige, U., Mirrokni, V. S., and Vondrák, J. in their paper:
-
-> Feige, U., Mirrokni, V. S., & Vondrák, J. (2011). Maximizing Non-monotone Submodular Functions. SIAM J. Comput., 40(4), 1133–1153. https://doi.org/10.1137/090779346
-
-These algorithms are called:
-* Random Set
-* Deterministic Local Search
-* Smooth Local Search
-
-Next, this repository contains two of the algorithms propsed by Buchbinder, N., Feldman, M., Naor, J. S., and Schwartz, R. in their paper:
-
-> Buchbinder, N., Feldman, M., Naor, J. S., & Schwartz, R. (2015). A tight linear time (1/2)-approximation for unconstrained submodular maximization. SIAM Journal on Computing, 44(5), 1384–1402. https://doi.org/10.1137/130929205
-
-For a lack of a better name, this repository calls these algorithms:
-* Deterministic Double Greedy Search (Deterministic USM in the original paper)
-* Randomized Double Greedy Search (Randomized USM in the original paper)
 
 ## Basic example
 
@@ -103,6 +84,25 @@ To use it in your project, you can use:
 ``` Python 
 from submodmax import <what-you-need>
 ```
+
+## Included submodular maximization algorithms
+
+First, this repository includes the three algorithms proposed by Feige, U., Mirrokni, V. S., and Vondrák, J. in their paper:
+
+> Feige, U., Mirrokni, V. S., & Vondrák, J. (2011). Maximizing Non-monotone Submodular Functions. SIAM J. Comput., 40(4), 1133–1153. https://doi.org/10.1137/090779346
+
+These algorithms are called:
+* Random Set
+* Deterministic Local Search
+* Smooth Local Search
+
+Next, this repository contains two of the algorithms propsed by Buchbinder, N., Feldman, M., Naor, J. S., and Schwartz, R. in their paper:
+
+> Buchbinder, N., Feldman, M., Naor, J. S., & Schwartz, R. (2015). A tight linear time (1/2)-approximation for unconstrained submodular maximization. SIAM Journal on Computing, 44(5), 1384–1402. https://doi.org/10.1137/130929205
+
+For a lack of a better name, this repository calls these algorithms:
+* Deterministic Double Greedy Search (Deterministic USM in the original paper)
+* Randomized Double Greedy Search (Randomized USM in the original paper)
 
 ## Usage
 
