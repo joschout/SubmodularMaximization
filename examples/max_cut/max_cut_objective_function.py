@@ -1,11 +1,28 @@
 from typing import Set, TypeVar
 
-from examples.max_cut.calculate_cut import calculate_cut_value
 from submodmax.abstract_optimizer import AbstractSubmodularFunction
 
 import numpy as np
 
 E = TypeVar('E')
+
+VertexIndex = int
+
+
+def calculate_cut_value(cut_from_set: Set[VertexIndex], graph: np.ndarray):
+
+    cut_from_indices: np.ndarray = np.array(list(cut_from_set))
+    n_vertices = graph.shape[0]
+    cut_from_mask = np.zeros(n_vertices, dtype=bool)
+    cut_from_mask[cut_from_indices] = True
+    cut_to_mask = ~cut_from_mask
+
+    cut_value = 0
+    for vertex_index in cut_from_set:
+        vertex_edge_row: np.ndarray = graph[vertex_index]
+        vertex_edges_to = vertex_edge_row[cut_to_mask]
+        cut_value += np.sum(vertex_edges_to)
+    return cut_value
 
 
 class MaxCutObjectiveFunction(AbstractSubmodularFunction):

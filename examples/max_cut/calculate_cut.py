@@ -1,7 +1,9 @@
-from typing import List, Set
+from typing import List
 from itertools import combinations, chain
 
 import numpy as np
+
+from examples.max_cut.max_cut_objective_function import calculate_cut_value
 
 VIndex = int
 
@@ -14,22 +16,6 @@ def has_correct_shape(matrix: np.ndarray):
     return True
 
 # cut_from_set: Set[VIndex] = {0}
-
-
-def calculate_cut_value(cut_from_set: Set[VIndex], graph: np.ndarray):
-
-    cut_from_indices: np.ndarray = np.array(list(cut_from_set))
-    n_vertices = graph.shape[0]
-    cut_from_mask = np.zeros(n_vertices, dtype=bool)
-    cut_from_mask[cut_from_indices] = True
-    cut_to_mask = ~cut_from_mask
-
-    cut_value = 0
-    for vertex_index in cut_from_set:
-        vertex_edge_row: np.ndarray = graph[vertex_index]
-        vertex_edges_to = vertex_edge_row[cut_to_mask]
-        cut_value += np.sum(vertex_edges_to)
-    return cut_value
 
 
 def powerset(iterable):
