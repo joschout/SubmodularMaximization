@@ -10,6 +10,11 @@ A collection of optimization algorithms for Unconstrained Submodular Maximizatio
 * [Basic example](https://github.com/joschout/SubmodularMaximization#basic-example)
 * [Installation](https://github.com/joschout/SubmodularMaximization#installing-submodmax)
 * [Usage](https://github.com/joschout/SubmodularMaximization#usage)
+    * [The submodular function to be maximized](https://github.com/joschout/SubmodularMaximization#the-submodular-function-to-be-maximized)
+        * [General submodular functions - evaluation without function value reuse]
+        * []
+    * [The optimizers](https://github.com/joschout/SubmodularMaximization#the-optimizers)
+    
 * [Reason behind this repo](https://github.com/joschout/SubmodularMaximization#reason-behind-this-repository)
 * [References](https://github.com/joschout/SubmodularMaximization#references)
 
@@ -103,18 +108,17 @@ from submodmax import <what-you-need>
 
 The following describes how to use this repository in your own implementation.
 
-### The submodular function to be optimized.
+### The submodular function to be maximized
 
-Here we describe the interface submodular functions should have to work with this package. We provide two different interfaces: one for general functions, and one for functions for which we can use a computational trick to speed things up. 
+Here we describe the interface that submodular functions should have.
+We provide two different interfaces: 
+1. general submodular functions,
+2. functions for which we can use a computational trick that might speed things. That is, if the submodular objective function is sequentially evaluate, we might only need to take into account the difference between the sets between two consecutive evaluations, and update the previous function value using this information. In this package, we refer to this as **function value reuse**.
 
-Now we describe our case where we can speed things up. Submodular optimization often repeatedly evaluates the function to be optimized, sequentially using different sets as input. Evaluating the function can be costly: the computational effort is often a function of the elements in the set. However, due to the way some optimization algorithms (such as Greedy Search) work, the input sets used for the sequence of evaluations do not differ that much. Often, only one element is added or removed at a time. For such functions, it is sometimes possible to reuse the function value obtained from the previous evaluation, and update it with the difference corresponding to the changed set. This can drastically reduced the number of work. 
+#### General submodular functions - evaluation without function value reuse
+Without function value reuse, submodular functions can be implemented similar to the [basic example](https://github.com/joschout/SubmodularMaximization#basic-example), which can also be found in [./examples/example_Andreas_Krause.py](./examples/example_Andreas_Krause.py)
 
-An example is the Interpretable Decision Set objective function, of which the evaluation time in function of the input set size improves dramatically when the function value of the previous evaluation is reused, compared to recomputing the whole evaluation:
-
-![Example animations of falling marbles](./images/ids_regular_vs_value_reuse_time_ifo_current_set_size_segment.jpeg)
-
-### Submodular functions - without function value reuse
-To use this in your own code, your function to be maximized should be contained in an object of a class inheriting from `AbstractSubmodularFunction`. This class looks as follows:
+More specifically, the submodular function to be maximized should be contained in an object of a class inheriting from `AbstractSubmodularFunction`. This class looks as follows:
 ``` Python 
 class AbstractSubmodularFunction:
     def evaluate(self, input_set: Set[E]) -> float:
@@ -124,8 +128,17 @@ That is, `AbstractSubmodularFunction` requires its subclasses to implement an `e
 
 Typically, your own class inheriting `AbstractSubmodularFunction` can contain instance variables for parameters required by the objective function.
 
-### Submodular functions - with function value reuse
-To use this in your own code, your function to be maximized should be contained in an object of a class inheriting from `AbstractSubmodularFunctionValueReuse`. This class looks as follows:
+
+### Speeding up submodular functions evaluation with function value reuse
+
+Now we describe the case where we might speed things up. Submodular optimization often repeatedly evaluates the function to be optimized, sequentially using different sets as input. Evaluating the function can be costly: the computational effort is often a function of the elements in the set. However, due to the way some optimization algorithms (such as Greedy Search) work, the input sets used for the sequence of evaluations do not differ that much. Often, only one element is added or removed at a time. For such functions, it is sometimes possible to reuse the function value obtained from the previous evaluation, and update it with the difference corresponding to the changed set. This can drastically reduced the number of work. 
+
+An example is the Interpretable Decision Set objective function, of which the evaluation time in function of the input set size improves dramatically when the function value of the previous evaluation is reused, compared to recomputing the whole evaluation:
+
+![Comparison of the run time for evaluating the IDS objective function with and without function value reuse](./images/ids_regular_vs_value_reuse_time_ifo_current_set_size_segment.jpeg)
+
+
+To use this in your own code, you can have a look at the basic example in [./examples/value_reuse/example_Andreas_Krause.py](./examples/value_reuse/example_Andreas_Krause.py). More specifically, the submodular function to be maximized should be contained in an object of a class inheriting from `AbstractSubmodularFunctionValueReuse`. This class looks as follows:
 ``` Python 
 class AbstractSubmodularFunctionValueReuse:
 
@@ -135,9 +148,8 @@ class AbstractSubmodularFunctionValueReuse:
         raise NotImplementedError('abstract method')
 ```
 
-
 ### The Optimizers
-Every included optimizer inherits the class `AbstractOptimizer`. Each optimizer should be initialized with at least two arguments:
+Every included optimizer inherits the class `AbstractOptimizer` (or `AbstractSubmodularFunctionValueReuse`). Each optimizer should be initialized with at least two arguments:
 1. the objective function to be optimized
 2. the ground set of items. The optimizers will search over the power set of this ground set.
 
