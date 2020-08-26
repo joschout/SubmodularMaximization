@@ -13,6 +13,7 @@ A collection of optimization algorithms for Unconstrained Submodular Maximizatio
     * [The submodular function to be maximized](https://github.com/joschout/SubmodularMaximization#the-submodular-function-to-be-maximized)
         * [General submodular functions - evaluation without function value reuse](https://github.com/joschout/SubmodularMaximization#general-submodular-functions---evaluation-without-function-value-reuse)
         * [Speeding up submodular functions evaluation with function value reuse](https://github.com/joschout/SubmodularMaximization#speeding-up-submodular-functions-evaluation-with-function-value-reuse)
+        * [Defining your own submodular function](https://github.com/joschout/SubmodularMaximization#defining-your-own-submodular-function)
     * [The optimizers](https://github.com/joschout/SubmodularMaximization#the-optimizers)
     
 * [Reason behind this repo](https://github.com/joschout/SubmodularMaximization#reason-behind-this-repository)
@@ -140,7 +141,7 @@ The following example plot shows the evaluation time for the Interpretable Decis
 
 ![Comparison of the run time for evaluating the IDS objective function with and without function value reuse](./images/ids_regular_vs_value_reuse_time_ifo_current_set_size_segment.jpeg)
 
-### Defining your own submodular function
+#### Defining your own submodular function
 
 To use this package in your own code, you can have a look at the basic example in [./examples/value_reuse/example_Andreas_Krause.py](./examples/value_reuse/example_Andreas_Krause.py). More specifically, the submodular function to be maximized should be contained in an object of a class inheriting from `AbstractSubmodularFunctionValueReuse`. This class looks as follows:
 ``` Python 
