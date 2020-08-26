@@ -140,8 +140,9 @@ The following example plot shows the evaluation time for the Interpretable Decis
 
 ![Comparison of the run time for evaluating the IDS objective function with and without function value reuse](./images/ids_regular_vs_value_reuse_time_ifo_current_set_size_segment.jpeg)
 
+### Defining your own submodular function
 
-To use this in your own code, you can have a look at the basic example in [./examples/value_reuse/example_Andreas_Krause.py](./examples/value_reuse/example_Andreas_Krause.py). More specifically, the submodular function to be maximized should be contained in an object of a class inheriting from `AbstractSubmodularFunctionValueReuse`. This class looks as follows:
+To use this package in your own code, you can have a look at the basic example in [./examples/value_reuse/example_Andreas_Krause.py](./examples/value_reuse/example_Andreas_Krause.py). More specifically, the submodular function to be maximized should be contained in an object of a class inheriting from `AbstractSubmodularFunctionValueReuse`. This class looks as follows:
 ``` Python 
 class AbstractSubmodularFunctionValueReuse:
     def evaluate(self, current_set_info: SetInfo,
