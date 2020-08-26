@@ -110,10 +110,10 @@ The following describes how to use this repository in your own implementation.
 
 ### The submodular function to be maximized
 
-Here we describe the interface that submodular functions should have.
-We provide two different interfaces: 
-1. general submodular functions,
-2. functions for which we can use a computational trick that might speed things. That is, if the submodular objective function is sequentially evaluate, we might only need to take into account the difference between the sets between two consecutive evaluations, and update the previous function value using this information. In this package, we refer to this as **function value reuse**.
+A submodular function can be represented as an object of a class implementing one of two interfaces, depending on whether the maximization algorithm can use marginal increments to speed things up:
+
+1. General submodular functions should implement the [`AbstractSubmodularFunction` interface](./submodmax/abstract_optimizer.py).
+2. Submodular functions for which the maximization algorithm only computes marginal increments, for which we can use a computational trick to speed things up. I.e., if the submodular objective function is sequentially evaluated, we might only need to take into account the difference between the sets between two consecutive evaluations, and update the previous function value using this information. In this package, we refer to this as **function value reuse**.
 
 #### General submodular functions - evaluation without function value reuse
 Without function value reuse, submodular functions can be implemented similar to the [basic example](https://github.com/joschout/SubmodularMaximization#basic-example), which can also be found in [./examples/example_Andreas_Krause.py](./examples/example_Andreas_Krause.py)
@@ -131,9 +131,12 @@ Typically, your own class inheriting `AbstractSubmodularFunction` can contain in
 
 #### Speeding up submodular functions evaluation with function value reuse
 
-Now we describe the case where we might speed things up. Submodular optimization often repeatedly evaluates the function to be optimized, sequentially using different sets as input. Evaluating the function can be costly: the computational effort is often a function of the elements in the set. However, due to the way some optimization algorithms (such as Greedy Search) work, the input sets used for the sequence of evaluations do not differ that much. Often, only one element is added or removed at a time. For such functions, it is sometimes possible to reuse the function value obtained from the previous evaluation, and update it with the difference corresponding to the changed set. This can drastically reduced the number of work. 
+Submodular optimization often corresponds to repeated evaluation of the function to be optimized, using different sets as input. Evaluating the function can be costly: the computational effort is often a function of the elements in the set. However, some optimization algorithms (such as Buchbinder's Greedy Search) sequentially evaluate the submodular function on input sets where two consecutive input sets do not differ much. Often, only one element is added or removed at a time. For such functions, it is sometimes possible to reuse the function value obtained from the previous evaluation, and update it with the difference corresponding to the changed set. This difference is called the **marginal increment**. This trick is used in [Andreas Krause's SFO toolbox](https://las.inf.ethz.ch/sfo/index.html), [as described in](https://www.jmlr.org/papers/volume11/krause10a/krause10a.pdf):
+> Krause, Andreas. "SFO: A toolbox for submodular function optimization." The Journal of Machine Learning Research 11 (2010): 1141-1144. 
 
-An example is the Interpretable Decision Set objective function, of which the evaluation time in function of the input set size improves dramatically when the function value of the previous evaluation is reused, compared to recomputing the whole evaluation:
+Using marginal increments to update the previous function value can drastically reduce the work, compared to re-evaluating the function on the whole input set.
+
+The following example plot shows the evaluation time for the Interpretable Decision Set objective function, for gradually larger input sets. Here, the evaluation time in function of the input set size improves dramatically when the function value of the previous evaluation is reused and updated with the marginal increment, compared to the evaluation time of recomputing the function on the whole input set.
 
 ![Comparison of the run time for evaluating the IDS objective function with and without function value reuse](./images/ids_regular_vs_value_reuse_time_ifo_current_set_size_segment.jpeg)
 
