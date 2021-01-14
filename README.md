@@ -21,7 +21,7 @@ A collection of optimization algorithms for Unconstrained Submodular Maximizatio
 
 ## Basic example
 
-As a minimal example, we can use the simple submodular function used in Andreas Krause's great [tutorial slides at www.submodularity.org](https://www.submodularity.org). This function defines the following mapping:
+As a minimal example, we can use the simple submodular function used in Andreas Krause's great [tutorial slides at www.submodularity.org](https://las.inf.ethz.ch/submodularity/). This function defines the following mapping:
 
 | input_set | output |
 |-----------|--------|
