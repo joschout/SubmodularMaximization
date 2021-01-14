@@ -62,8 +62,8 @@ submodular_objective_function = ExampleFunction()
 ground_set: Set[int] = {1, 2}
 
 # Initialize an optimization algorithm with 
-#   the submodlar function 
-#       and the ground set
+#   * the submodular function 
+#   * the ground set
 optimizer: AbstractOptimizer = RandomizedDoubleGreedySearch(
     objective_function=submodular_objective_function,
     ground_set=ground_set,
