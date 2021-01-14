@@ -21,7 +21,7 @@ A collection of optimization algorithms for Unconstrained Submodular Maximizatio
 
 ## Basic example
 
-As a minimal example, we can use the simple submodular function used in Andreas Krause's great [tutorial slides at www.submodularity.org](www.submodularity.org). This function defines the following mapping:
+As a minimal example, we can use the simple submodular function used in Andreas Krause's great [tutorial slides at www.submodularity.org](https://www.submodularity.org). This function defines the following mapping:
 
 | input_set | output |
 |-----------|--------|
@@ -40,6 +40,7 @@ from submodmax.randomized_double_greedy_search import RandomizedDoubleGreedySear
 
 E = TypeVar('E')
 
+# Define the submodular function to maximize
 class ExampleFunction(AbstractSubmodularFunction):
     def evaluate(self, input_set: Set[int]) -> float:
         if input_set == set():
@@ -52,15 +53,24 @@ class ExampleFunction(AbstractSubmodularFunction):
             return 0
         else:
             raise Exception(f"The input set was not expected: {input_set}")
-# -------------
-ground_set: Set[int] = {1, 2}
+
+# Intialize the submodular function
 submodular_objective_function = ExampleFunction()
 
+# -------------
+# Define the ground set
+ground_set: Set[int] = {1, 2}
+
+# Initialize an optimization algorithm with 
+#   the submodlar function 
+#       and the ground set
 optimizer: AbstractOptimizer = RandomizedDoubleGreedySearch(
     objective_function=submodular_objective_function,
     ground_set=ground_set,
     debug=False
 )
+
+# Run the optimization algorithm to get a solution
 local_optimum: Set[int] = optimizer.optimize()
 true_optimum: Set[int] = {2}
 print(local_optimum)
